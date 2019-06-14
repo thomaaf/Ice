@@ -1,4 +1,9 @@
 #include <Wire.h>
+#if (ARDUINO >= 100)
+ #include "Arduino.h"
+#else
+ #include "WProgram.h"
+#endif
 
 #define MLX90615_I2C_ADDR    0x5A
 //RAM ACCESS
@@ -18,6 +23,7 @@
 class tempsensor{
 	private: 
 		uint16_t read_word16(uint8_t reg);
+		void  write_word16();
 	public: 
 
 		void  begin();
@@ -25,5 +31,6 @@ class tempsensor{
 		float get_OBJ1_tmp();
 		float get_OBJ2_tmp();
 		float get_OBJTOT_tmp();
+		void set_emissivity(int em);
 		
 };
