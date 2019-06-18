@@ -1,8 +1,8 @@
 import serial
 import json
-ser = serial.Serial("COM5", 9600)
-datalist = ["duty","temp_amb","temp_obj"]
-data=[[],[],[]]
+ser = serial.Serial("COM4", 38400)
+datalist = ["duty","temp_amb","temp_obj","RTD"]
+data=[[],[],[],[]]
 string ="{\"data\": \n \t [ \n" 
 while True:
 	try:
