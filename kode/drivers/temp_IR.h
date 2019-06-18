@@ -20,7 +20,7 @@
 #define EPROOM_PWM_CONTROL 			0x22
 #define EPROOM_EMMISSION 			0x24
 
-class tempsensor{
+class temp_IR{
 	private: 
 		uint16_t read_word16(uint8_t reg);
 		void  write_word16();
