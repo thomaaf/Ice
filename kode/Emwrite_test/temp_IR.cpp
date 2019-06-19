@@ -20,7 +20,7 @@ byte crc8(byte *addr, byte len)
 
 void temp_IR::write_word16(){
   uint8_t i2c_addr_ = MLX90615_I2C_ADDR;
-  byte buf [] = {0x00, 0x24,0x00,0x00  };
+  byte buf [] = {0x00, 0x2F,0x00,0x00  };
   byte crc = crc8 (buf, sizeof buf);
   Serial.print ("CRC was: ");
   Serial.println (crc, HEX);   
@@ -28,24 +28,24 @@ void temp_IR::write_word16(){
 
   
   Wire.beginTransmission(0x00);
-  Wire.write(0x24); //Register Address to write to
+  Wire.write(0x2F); //Register Address to write to
   Wire.write(0x00); //Erase low byte (write 0)
   Wire.write(0x00); //Erase high byte (write 0)1
-  Wire.write(crc); //Erase high byte (write 0)1
+  Wire.write(crc); //write crc
   Serial.println( Wire.endTransmission() );
   delay(1000);
 
 
-  byte bu2 [] = {0x00, 0x24,0xFF,0xFF  };
+  byte bu2 [] = {0x00, 0x2F,0xBB,0x15 };
   crc = crc8 (bu2, sizeof bu2);
   Serial.print ("CRC was: ");
   Serial.println (crc, HEX);   
 
   Wire.beginTransmission(0x00);
-  Wire.write(0x24); //Register Address to write to
-  Wire.write(0xFF); //Erase low byte (write 0)
-  Wire.write(0xFF); //Erase high byte (write 0)1
-  Wire.write(crc); //Erase high byte (write 0)1
+  Wire.write(0x2F); //Register Address to write to
+  Wire.write(0xBB); //write low byte 
+  Wire.write(0x15); //write high byte 
+  Wire.write(crc); //write crc
   Serial.println( Wire.endTransmission() );
   delay(1000);
 }
@@ -95,4 +95,15 @@ uint16_t temp_IR::read_word16(uint8_t reg){
   Wire.read(); // read and discard PEC (packet error code
   
   return data;  
+}
+
+uint16_t temp_IR::get_emissivity(int n){
+  if (n==2){
+    return read_word16(EPROOM_EMMISSION2);  
+  }
+  else{
+    return read_word16(EPROOM_EMMISSION);  
+
+  }
+  
 }

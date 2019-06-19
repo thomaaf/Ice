@@ -19,6 +19,7 @@
 #define EPROOM_TA_RANGE 			0x23
 #define EPROOM_PWM_CONTROL 			0x22
 #define EPROOM_EMMISSION 			0x24
+#define EPROOM_EMMISSION2 			0x2F
 
 class temp_IR{
 	private: 
@@ -32,5 +33,6 @@ class temp_IR{
 		float get_OBJ2_tmp();
 		float get_OBJTOT_tmp();
 		void set_emissivity(int em);
+		uint16_t get_emissivity(int n);
 		
 };
