@@ -15,11 +15,15 @@ void setup() {
 
 void loop() {
 	Serial.print("RTD,");
-	Serial.print(analogRead(A0));
-  Serial.print(",temp_amb,");
-  Serial.print(tmp.get_AMB_tmp());
-  Serial.print(",temp_obj,");
-  Serial.println(tmp.get_OBJTOT_tmp());
+	Serial.print((analogRead(A0)-511)/10.23);
+  Serial.print(",IR_amb,");
+  Serial.print(tmp.get_AMB_tmp()); 
+  Serial.print(",IR_OBJ1,");
+  Serial.print(tmp.get_OBJ1_tmp()); 
+  Serial.print(",IR_OBJ2,");
+  Serial.print(tmp.get_OBJ2_tmp());     
+  Serial.print(",IR_OBJTOT,");
+  Serial.println(tmp.get_OBJTOT_tmp());   
   
 	
 }
