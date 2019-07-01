@@ -8,8 +8,8 @@ void setup() {
   tmp.begin();
   Serial.begin(230400);
   pinMode(A0,INPUT);
-  pinMode(A1,INPUT);
-  analogReference(EXTERNAL);
+  pinMode(A3,INPUT);
+  analogReference(DEFAULT );
 }
 
 int t = 0;
@@ -59,7 +59,7 @@ float getCurrentEst(int duty){
 float i = 0;
 void loop() {
     i = round((round((sin((float)2*millis()/1000)+1)*255/2) + round((sin((float) millis()/6000)+1)*255/2))/2);
-    //i = round((round((sin((float)5*millis()/1000)+1)*255/2))/1);
+    i = round((round((sin((float) millis()/1000)+1)*255/2))/1);
     PWM.set_control(1,i);
     for (int j = 0; j <5; j++){
       Serial.print("duty, ");
@@ -71,7 +71,7 @@ void loop() {
       Serial.print(",currentEst,");
       Serial.print(getCurrentEst(i));
       Serial.print(",RTD,");
-      Serial.print((float)(analogRead(A1)-518)/1023*100);
+      Serial.print((float)(analogRead(A3)-518)/1023*100);
       Serial.print(",millis,");
       Serial.println(millis());        
     }} 
