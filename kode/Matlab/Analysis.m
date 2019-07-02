@@ -1,6 +1,6 @@
-indicator ="Temp_ir,Kalman_p_est_,Kalman_gain,Kalman_est,Kalman_cov,duty,currentMeas,currentEst,RTD,millis";
+indicator ="test,Temp_ir,Kalman_p_est_,Kalman_gain,Kalman_est,Kalman_cov,duty,currentMeas,currentEst,RTD,millis";
 COM = 'COM4';
-BAUD = 230400;
+BAUD = 19200;
 S = SerialRead(indicator,COM,BAUD)
 clear COM BAUD indicator
 

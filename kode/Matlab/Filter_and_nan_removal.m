@@ -16,7 +16,7 @@ for i = 2:size(S.millis,2)
     
 end
 %%
-S.RTD = S.RTD(1:89210);
+S.RTD = RTD_filtered(1:89210)';
 S.millis = S.millis(1:89210);
 S.currentEst = S.currentEst(1:89210);
 S.currentMeas = S.currentMeas(1:89210);
