@@ -1,7 +1,8 @@
-indicator ="test,Temp_ir,Kalman_p_est_,Kalman_gain,Kalman_est,Kalman_cov,duty,currentMeas,currentEst,RTD,millis";
+%indicator ="test,Temp_ir,Kalman_p_est_,Kalman_gain,Kalman_est,Kalman_cov,duty,currentMeas,currentEst,RTD,millis";
+indicator = "phi1,phi2,phi3,u,duty,tmp,w1,w2,ym,z,theta";
 COM = 'COM4';
-BAUD = 19200;
-S = SerialRead(indicator,COM,BAUD)
+BAUD = 38400;
+[S,indicator,theta] = SerialRead(indicator,COM,BAUD);
 clear COM BAUD indicator
 
 %%
@@ -9,6 +10,7 @@ clear COM BAUD indicator
 
 
 figure(1)
+clf(1)
 %for 
 ButtonHandle =  uicontrol('Position',[0 0 60 20],'Style', 'PushButton','String', 'Stop loop','Callback', 'delete(gcbf)');	
 ButtonHandle =  uicontrol('Position',[60 0 60 20],'Style', 'togglebutton','String', 'HOLD','Callback',@Togglehold);	

@@ -6,7 +6,7 @@ void setup() {
   PWM.begin();
   PWM.set_control(1,0);
   tmp.begin();
-  Serial.begin(230400);
+  Serial.begin(38400);
   pinMode(A0,INPUT);
   pinMode(A3,INPUT);
   analogReference(DEFAULT );
