@@ -20,7 +20,10 @@ byte crc8(byte *addr, byte len)
 
 void temp_IR::write_word16(){
   uint8_t i2c_addr_ = MLX90615_I2C_ADDR;
-  byte buf [] = {0x00, 0x2F,0x00,0x00  };
+  uint8_t registerAdress = 0x24;
+  uint8_t lowByte = 0xCC;
+  uint8_t highbyte = 0x4C;
+  byte buf [] = {0x00, registerAdress,0x00,0x00  };
   byte crc = crc8 (buf, sizeof buf);
   Serial.print ("CRC was: ");
   Serial.println (crc, HEX);   
@@ -28,7 +31,7 @@ void temp_IR::write_word16(){
 
   
   Wire.beginTransmission(0x00);
-  Wire.write(0x2F); //Register Address to write to
+  Wire.write(registerAdress); //Register Address to write to
   Wire.write(0x00); //Erase low byte (write 0)
   Wire.write(0x00); //Erase high byte (write 0)1
   Wire.write(crc); //write crc
@@ -36,15 +39,15 @@ void temp_IR::write_word16(){
   delay(1000);
 
 
-  byte bu2 [] = {0x00, 0x2F,0xBB,0x15 };
+  byte bu2 [] = {0x00, registerAdress,lowByte,highbyte };
   crc = crc8 (bu2, sizeof bu2);
   Serial.print ("CRC was: ");
   Serial.println (crc, HEX);   
 
   Wire.beginTransmission(0x00);
-  Wire.write(0x2F); //Register Address to write to
-  Wire.write(0xBB); //write low byte 
-  Wire.write(0x15); //write high byte 
+  Wire.write(registerAdress); //Register Address to write to
+  Wire.write(lowByte); //write low byte 
+  Wire.write(highbyte); //write high byte 
   Wire.write(crc); //write crc
   Serial.println( Wire.endTransmission() );
   delay(1000);
@@ -55,7 +58,7 @@ void temp_IR::set_emissivity(int em){
   Serial.print("Emissivity: ");
   Serial.println(read_word16(EPROOM_EMMISSION),HEX);
   Serial.print("Emissivity2: ");
-  Serial.println(read_word16(0x2F),DEC);
+  Serial.println(read_word16(0x2F),HEX);
 
 }
 

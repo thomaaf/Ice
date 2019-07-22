@@ -2,16 +2,16 @@
 %indicator ="z,epsilon,t,yp,ym,up,upIn,r,theta,w,ypSim,phip";
 %Mrac2
 %indicator = "e1Int,w1,w2,ym,yp,up,current,duty,e1,t,theta";
-indicator = "DryTempRef,DewTempRef,refstate,ref,light,temperature,duty,dir,dt,integral,t,error";
-COM = 'COM4';
-BAUD = 74880;
-[S,readindicator] = SerialRead(indicator,COM,BAUD);
-clear COM BAUD indicator
-if size(instrfind(),1)>0
-	fclose(instrfind());
-	delete(instrfind());	   
-end
-%
+indicator = "refstate,ref,refder,light,error,temperature,duty,dir,dt,integral,t,Lp";
+% COM = 'COM4';
+% BAUD = 74880;
+% [S,readindicator] = SerialRead(indicator,COM,BAUD);
+% clear COM BAUD indicator
+% if size(instrfind(),1)>0
+% 	fclose(instrfind());
+% 	delete(instrfind());	   
+% end
+%%
 Retroplot(readindicator,S);
 
 %%
@@ -97,7 +97,6 @@ if readindicator == 1
     for i= 1:size(fieldnames(S),1)
         uicontrol(bg1,'Position',[0 i*20 60 20],'Style', 'checkbox','String', fields(i),'Callback', @plot_new);
     end
-    HoldButton = uicontrol(bg1,'Position',[0 size(fieldnames(S),1)*20 60 20],'Style', 'pushbutton','String', 'Clear Fig','Callback',@Togglehold);	
     tmpfields = string(fieldnames(S));
     
     plot(S.(string(fields(1))),'Tag',tmpfields(1),'DisplayName',tmpfields(1));
@@ -106,17 +105,16 @@ end
 end
 
 function Togglehold(src,event)
+    
     if src.String== "Hold off"
         hold on
-        src.String = "Hold on";
+        src.String = "Hold on"
             
     elseif src.String == "Hold on"
         hold off
-        src.String = "Hold off";
-    elseif src.String == "Clear Fig"
-        
+        src.String = "Hold off"
     end
-      
+    
 end
 
 function bselection(source,event)
@@ -132,6 +130,7 @@ function bselection(source,event)
 end
 
 function bselection2(source,event)
+    get(gcbo())
     if source.String == "Auto axis"
        axis("auto")
        disp(source.String)
@@ -163,7 +162,7 @@ function plot_new(src,event)
                     end
                 end
             elseif src.Value == 1
-                plot(S.(string(fields(i))),'-','Tag',fields(i),'DisplayName',fields(i));
+                plot(S.(string(fields(i))),'Tag',fields(i),'DisplayName',fields(i));
                 grid on
             end
         end

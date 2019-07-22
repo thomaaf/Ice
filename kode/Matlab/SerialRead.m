@@ -25,11 +25,13 @@ fopen(s);
 theta = zeros(1,4);
 Q   = zeros(1,4);
 R     = zeros(1,16);
+phip = zeros(1,4);
+W = zeros(1,2);
+ypSim = zeros(1,2);
 while 1
     %plot(size(S.duty,2),S.duty(end),'.');
 	if ~ishandle(ButtonHandle)
 		disp('Serial read stopped, discarding, plotting');
-        S.theta = theta;
         S.theta = theta;
 		break;
     elseif ~ishandle(ButtonHandle2)
@@ -59,13 +61,20 @@ while 1
                        theta = [theta;str2num(b(j+1))' ];
                     elseif string(indicator(i)) == "R"
                        R = [R; str2num(b(j+1))'];
-                    elseif string(indicator(i)) == "Q"
-                       Q = [Q; str2num(b(j+1))'];                       
+                    elseif string(indicator(i)) == "phip"
+                       phip = [phip; str2num(b(j+1))'];      
+                    elseif string(indicator(i)) == "w"
+                       W = [W; str2num(b(j+1))']; 
+                    elseif string(indicator(i)) == "ypSim"
+                       ypSim = [ypSim; str2num(b(j+1))'];                             
                     elseif string(indicator(i)) == "t"
                        S.(string(indicator(i))) = [S.(string(indicator(i))) str2num(b(j+1))];
                        S.theta = theta;
                        S.R = R;
                        S.Q = Q;
+                       S.W = W;
+                       S.ypSim = ypSim;
+                       S.phip = phip;
                        if str2num(b(j+1))' >1000000
                            return;
                        end
