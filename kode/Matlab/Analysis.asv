@@ -2,16 +2,16 @@
 %indicator ="z,epsilon,t,yp,ym,up,upIn,r,theta,w,ypSim,phip";
 %Mrac2
 %indicator = "e1Int,w1,w2,ym,yp,up,current,duty,e1,t,theta";
-indicator = "refstate,ref,refder,light,error,temperature,duty,dir,dt,integral,t,Lp";
-% COM = 'COM4';
-% BAUD = 74880;
-% [S,readindicator] = SerialRead(indicator,COM,BAUD);
-% clear COM BAUD indicator
-% if size(instrfind(),1)>0
-% 	fclose(instrfind());
-% 	delete(instrfind());	   
-% end
-%%
+indicator = "ambTemp,DryTempRef,DewTempRef,refstate,ref,light,temperature,duty,dir,dt,integral,t,error";
+COM = 'COM4'; 
+BAUD = 500000;
+[S,readindicator] = SerialRead(indicator,COM,BAUD);
+clear COM BAUD indicator
+if size(instrfind(),1)>0
+	fclose(instrfind());
+	delete(instrfind());	   
+end
+%
 Retroplot(readindicator,S);
 
 %%
@@ -87,9 +87,11 @@ if readindicator == 1
     uicontrol(bg,'Style','radiobutton','String','YYaxis left','Position',[0 0 80 20],'HandleVisibility','off');             
     uicontrol(bg,'Style','radiobutton','String','YYaxis right','Position',[80 0 80 20],'HandleVisibility','off');
       
-    uicontrol(bg2,'Style','edit','String','Custom axis','Position',[0 0 80 20],'HandleVisibility','off','Callback',@bselection2);
-    uicontrol(bg2,'Style','pushbutton','String','Auto axis','Position',[80 0 80 20],'HandleVisibility','off','Callback',@bselection2);
-    uicontrol(bg2,'Style','slider','String','ColorStyle','Position',[160 0 160 20],'HandleVisibility','off','Callback',@plotStyle);
+    uicontrol(bg2,'Style','edit','String','X-axis','Position',[0 0 80 20],'HandleVisibility','off','Callback',@setXaxis);
+    uicontrol(bg2,'Style','edit','String','Y-axis','Position',[80*1 0 80 20],'HandleVisibility','off','Callback',@setYaxis);
+    uicontrol(bg2,'Style','pushbutton','String','Auto axis','Position',[80*2 0 80 20],'HandleVisibility','off','Callback',@bselection2);
+    uicontrol(bg2,'Style','slider','String','ColorStyle','Position',[80*3 0 160 20],'HandleVisibility','off','Callback',@plotStyle);
+    
     
     
         
@@ -97,6 +99,7 @@ if readindicator == 1
     for i= 1:size(fieldnames(S),1)
         uicontrol(bg1,'Position',[0 i*20 60 20],'Style', 'checkbox','String', fields(i),'Callback', @plot_new);
     end
+    HoldButton = uicontrol(bg1,'Position',[0 size(fieldnames(S),1)*20 60 20],'Style', 'pushbutton','String', 'Clear Fig','Callback',@Togglehold);	
     tmpfields = string(fieldnames(S));
     
     plot(S.(string(fields(1))),'Tag',tmpfields(1),'DisplayName',tmpfields(1));
@@ -105,16 +108,17 @@ end
 end
 
 function Togglehold(src,event)
-    
     if src.String== "Hold off"
         hold on
-        src.String = "Hold on"
+        src.String = "Hold on";
             
     elseif src.String == "Hold on"
         hold off
-        src.String = "Hold off"
+        src.String = "Hold off";
+    elseif src.String == "Clear Fig"
+        
     end
-    
+      
 end
 
 function bselection(source,event)
@@ -130,7 +134,6 @@ function bselection(source,event)
 end
 
 function bselection2(source,event)
-    get(gcbo())
     if source.String == "Auto axis"
        axis("auto")
        disp(source.String)
@@ -162,7 +165,7 @@ function plot_new(src,event)
                     end
                 end
             elseif src.Value == 1
-                plot(S.(string(fields(i))),'Tag',fields(i),'DisplayName',fields(i));
+                plot(S.(string(fields(i)))(2:end),'-','Tag',fields(i),'DisplayName',fields(i));
                 grid on
             end
         end

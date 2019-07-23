@@ -50,9 +50,9 @@ while 1
 	pause(0.0000000001); 
 	Dataline=fgetl(s); 
 	a = string(Dataline(1:end-1)); 
+    disp(a)
 	b= strsplit(a,',');
 	if size(b,2)>1
-        disp(a)
 		for j=1:2:size(b,2)
 			
 			for i=1:size(indicator,2)

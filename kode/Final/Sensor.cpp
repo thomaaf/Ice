@@ -1,32 +1,60 @@
  #include "Sensor.h"
-Sensor::Sensor(int laserControlPin, int lightSensorReadPin,double lightFilterValue,int temperatureSensorReadPin, double temperatureFilterValue){
+Sensor::Sensor(int laserControlPin, int lightSensorReadPin,int ambientTemperatureReadPin, double lightFilterValue,int temperatureSensorReadPin, double temperatureFilterValue){
 	this -> laserControlPin = laserControlPin;
 	
 	this -> lightSensorReadPin = lightSensorReadPin;
 	this -> lightFilterValue = lightFilterValue;
-
+	this -> ambientTemperatureReadPin = ambientTemperatureReadPin; 
 	this -> temperatureSensorReadPin = temperatureSensorReadPin;
 	this -> temperatureFilterValue = temperatureFilterValue;
+
 }
 void Sensor::begin(){
+	Serial.println("Init Sensor system...");
+
 	pinMode(laserControlPin,OUTPUT);
 	pinMode(lightSensorReadPin,INPUT);
 	pinMode(temperatureSensorReadPin,INPUT);
 	digitalWrite(laserControlPin,LOW);
+	enableLaser();
+	while((abs(getTemperature()) - 25.0 > 10) || (abs(getAmbientTemperature()) - 25.0 > 10)||(getLightValue()>820)||(getLightValue()<100)){
+		measureTemperature();
+		measureLight();				
+		Serial.println("");
+		Serial.println("=====Sensors out of normal bounds=====");
+		Serial.println("Sensor status:");
+		Serial.print("\t Ambient temperature: "); Serial.println(getAmbientTemperature());
+		Serial.print("\t Temperature        : "); Serial.println(getTemperature());
+		Serial.print("\t Light              : "); Serial.println(getLightValue());
+		delay(100);
+	}
+	Serial.println("Sensor status:");
+	Serial.print("\t Ambient temperature: "); Serial.println(getAmbientTemperature());
+	Serial.print("\t Temperature        : "); Serial.println(getTemperature());
+	Serial.print("\t Light              : "); Serial.println(getLightValue());
+	int  t = millis();
+
+	while(millis() - t < 5000){
+		measureLight();
+		measureTemperature();
+	}
+	Serial.println("Starting main loop...");
+
 }	
 
 
 void Sensor::enableLaser(){
 	digitalWrite(laserControlPin,HIGH);
 }
+
 void Sensor::disableLaser(){
 	digitalWrite(laserControlPin,LOW);
 }
 
 
 void Sensor::measureLight(){
-	lightValue = lightValue + lightFilterValue*(analogRead(lightSensorReadPin) - lightValue);
-	//lightValue = 700 - millis()/50;
+	//Ema Filtered// lightValue = lightValue + lightFilterValue*(analogRead(lightSensorReadPin) - lightValue);
+	lightValue = analogRead(lightSensorReadPin);
 }
 
 double Sensor::getLightValue(){
@@ -34,13 +62,48 @@ double Sensor::getLightValue(){
 }
 
 void Sensor::measureTemperature(){
-	temperature = temperature + temperatureFilterValue*(((double)(analogRead(temperatureSensorReadPin)-518)/1023*100) - temperature);
+	temperature = temperature + temperatureFilterValue*(((double)(analogRead(temperatureSensorReadPin)-506)/1023*90) - temperature);
 }
 
 double Sensor::getTemperature(){
 	return temperature;
 }
+double Sensor::getAmbientTemperature(){
+	return (double) analogRead(ambientTemperatureReadPin)/1023*500;
+}
 
+void Sensor::modifiedMovingAverage(){
+	mean = ((sampleLength - 1)*mean + lightValue)/sampleLength;
+}
+
+double Sensor::getLightZeroMean(){
+	return zeroMean;
+}
+
+double Sensor::getLightMean(){
+	return mean;
+}
+
+double Sensor::getLightZeroVar(){
+	return zeroVariance;
+}
+
+double Sensor::probabilityTest(){
+	pValue = (mean - zeroMean)/pow(zeroVariance,0.5); 
+	return pValue;
+	//if(pValue < confidenceLevel){return 1;}
+	//else{return 0;}
+}
+
+void Sensor::setZeroMeanAndVar(double mean,double var){
+	Serial.println(mean);
+	Serial.println(var);
+	this -> zeroMean = mean;
+	this -> zeroVariance = var;
+	this -> mean = mean;
+}
+
+/* No longer used. Old reference based method
 void Sensor::calculateReference(){
 	switch (state){
 		case 1 : //Looking for dew to be removed
@@ -109,3 +172,4 @@ double Sensor::getDewTemperatureReference(){
 double Sensor::getDryTemperatureReference(){
 	return dryTemperatureReference;
 }
+*/

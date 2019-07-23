@@ -1,17 +1,14 @@
-%indicator ="RTD,temp_obj,Ambient,obj1,light";
-%indicator ="z,epsilon,t,yp,ym,up,upIn,r,theta,w,ypSim,phip";
-%Mrac2
-%indicator = "e1Int,w1,w2,ym,yp,up,current,duty,e1,t,theta";
-indicator = "DryTempRef,DewTempRef,refstate,ref,light,temperature,duty,dir,dt,integral,t,error";
-COM = 'COM4';
-BAUD = 74880;
+%indicator = "ambTemp,DryTempRef,DewTempRef,refstate,ref,light,temperature,duty,dir,dt,integral,t,error";
+indicator = "zeroMean,mean,pVal,ambTemp,ref,light,temperature,duty,dir,dt,integral,t,error";
+COM = 'COM4'; 
+BAUD = 500000;
 [S,readindicator] = SerialRead(indicator,COM,BAUD);
 clear COM BAUD indicator
 if size(instrfind(),1)>0
 	fclose(instrfind());
 	delete(instrfind());	   
 end
-%
+%%
 Retroplot(readindicator,S);
 
 %%
@@ -87,9 +84,11 @@ if readindicator == 1
     uicontrol(bg,'Style','radiobutton','String','YYaxis left','Position',[0 0 80 20],'HandleVisibility','off');             
     uicontrol(bg,'Style','radiobutton','String','YYaxis right','Position',[80 0 80 20],'HandleVisibility','off');
       
-    uicontrol(bg2,'Style','edit','String','Custom axis','Position',[0 0 80 20],'HandleVisibility','off','Callback',@bselection2);
-    uicontrol(bg2,'Style','pushbutton','String','Auto axis','Position',[80 0 80 20],'HandleVisibility','off','Callback',@bselection2);
-    uicontrol(bg2,'Style','slider','String','ColorStyle','Position',[160 0 160 20],'HandleVisibility','off','Callback',@plotStyle);
+    uicontrol(bg2,'Style','edit','String','X-axis','Position',[0 0 80 20],'HandleVisibility','off','Callback',@setXaxis);
+    uicontrol(bg2,'Style','edit','String','Y-axis','Position',[80*1 0 80 20],'HandleVisibility','off','Callback',@setYaxis);
+    uicontrol(bg2,'Style','pushbutton','String','Auto axis','Position',[80*2 0 80 20],'HandleVisibility','off','Callback',@bselection2);
+    uicontrol(bg2,'Style','slider','String','ColorStyle','Position',[80*3 0 160 20],'HandleVisibility','off','Callback',@plotStyle);
+    
     
     
         
@@ -131,15 +130,25 @@ function bselection(source,event)
     end
 end
 
+function setXaxis(source,event)
+
+    xlim(str2num(source.String));
+    disp(source.String)
+
+end
+
+function setYaxis(source,event)
+
+    ylim(str2num(source.String));
+    disp(source.String)
+
+end
+
 function bselection2(source,event)
-    if source.String == "Auto axis"
-       axis("auto")
-       disp(source.String)
-    else
-        disp(str2num(source.String))       
-        axis(str2num(source.String))
-         
-    end
+
+    axis("auto")
+    disp(source.String)
+
 end
 
 function plotStyle(source,event)
@@ -163,7 +172,7 @@ function plot_new(src,event)
                     end
                 end
             elseif src.Value == 1
-                plot(S.(string(fields(i))),'-','Tag',fields(i),'DisplayName',fields(i));
+                plot(S.(string(fields(i)))(2:end),'-','Tag',fields(i),'DisplayName',fields(i));
                 grid on
             end
         end
