@@ -15,8 +15,13 @@ private:
 	
 	int ambientTemperatureReadPin = 0; 
 	int temperatureSensorReadPin = 0;
+	double ambientTemperature = 0;
+	double temperatureHeavyFiltered = 20.0;
+	double 	temperatureHeavyFilterValue = 0.1;
+
 	double 	temperature = 20.0;
 	double 	temperatureFilterValue = 0.0;
+
 
 
 
@@ -29,8 +34,8 @@ private:
 	double pValue = 0;
 	double confidenceLevel = -1.645; //90% confident if i remember correctly
 
-	
-
+	double RH = 0;
+	double dp = 0;
 
 public:
 	Sensor(int laserControlPin, int lightSensorReadPin,int ambientTemperatureReadPin, double lightFilterValue,int temperatureSensorReadPin, double temperatureFilterValue);
@@ -52,6 +57,8 @@ public:
 	double getLightMean();
 	double getLightZeroVar();
 	double probabilityTest();
+
+	double dpCalculation();
 
 
 

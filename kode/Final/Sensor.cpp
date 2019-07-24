@@ -62,6 +62,7 @@ double Sensor::getLightValue(){
 }
 
 void Sensor::measureTemperature(){
+	temperatureHeavyFiltered = temperatureHeavyFiltered + temperatureHeavyFilterValue*(((double)(analogRead(temperatureSensorReadPin)-506)/1023*90) - temperatureHeavyFiltered);
 	temperature = temperature + temperatureFilterValue*(((double)(analogRead(temperatureSensorReadPin)-506)/1023*90) - temperature);
 }
 
@@ -73,7 +74,11 @@ double Sensor::getAmbientTemperature(){
 }
 
 void Sensor::modifiedMovingAverage(){
-	mean = ((sampleLength - 1)*mean + lightValue)/sampleLength;
+	// Two rolling Mean. zeroMean with long Slength, s.t mean fits settlings and longer duration disturbances
+	double sampleLengthShort = 50;
+	double sampleLengthLong  = 300;
+	mean = ((sampleLengthShort - 1)*mean + lightValue)/sampleLengthShort;
+	//zeroMean = ((sampleLengthLong - 1)*zeroMean + lightValue)/sampleLengthLong;
 }
 
 double Sensor::getLightZeroMean(){
@@ -102,7 +107,18 @@ void Sensor::setZeroMeanAndVar(double mean,double var){
 	this -> zeroVariance = var;
 	this -> mean = mean;
 }
-
+/*
+double Sensor::dpCalculation(){
+	double T = ambientTemperature;
+	double lambda = 243.12; double beta = 17.62;
+	dp = (lambda*(log(RH/100) + beta*T/(lambda + T)))/(beta - (log(RH/100) + beta*T/(lambda + T)));
+}
+double Sensor::referenceCalc(){
+	if (abs(temperatureFiltered-ref) < treshold ){
+		if ()
+	}
+}
+*/
 /* No longer used. Old reference based method
 void Sensor::calculateReference(){
 	switch (state){

@@ -21,8 +21,8 @@ byte crc8(byte *addr, byte len)
 void temp_IR::write_word16(){
   uint8_t i2c_addr_ = MLX90615_I2C_ADDR;
   uint8_t registerAdress = 0x24;
-  uint8_t lowByte = 0xCC;
-  uint8_t highbyte = 0x4C;
+  uint8_t lowByte = 0x8E;
+  uint8_t highbyte = 0x42;
   byte buf [] = {0x00, registerAdress,0x00,0x00  };
   byte crc = crc8 (buf, sizeof buf);
   Serial.print ("CRC was: ");
@@ -64,6 +64,7 @@ void temp_IR::set_emissivity(int em){
 
 void temp_IR::begin() {
   Wire.begin();
+  Serial.println("wire  Begun");
 }
 
 float temp_IR::get_AMB_tmp(){

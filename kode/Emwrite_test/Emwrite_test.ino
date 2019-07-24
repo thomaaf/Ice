@@ -11,11 +11,14 @@ void setup() {
   PWM.begin();
   PWM.set_control(1,200 );  
   tmp.begin();
-  pinMode(A3,INPUT);    
-  //delay(1000);
+  pinMode(A0,INPUT); 
+  pinMode(A4,INPUT);    
+  Serial.println("Test");
+  
+  delay(1000);
   //tmp.set_emissivity(73);
-  //delay(3000);
-  Serial.print(tmp.get_emissivity(0),HEX);  
+  delay(3000);
+  Serial.print(tmp.get_OBJ1_tmp());  
   Serial.print(",em2,");
   Serial.println(tmp.get_emissivity(2),HEX);    
   
@@ -24,9 +27,10 @@ double alfa = 1;
 double tmpRTD  = 0;
 void loop() {
   
-  double meas = ((double)(analogRead(A3)-504)/1023*100); 
+  double meas = ((double)(analogRead(A0)-504)/1023*100 - 2.9); 
   //double meas = ((double)(analogRead(A3))); 
   tmpRTD = tmpRTD + alfa*(meas - tmpRTD);  
+  double ambTemp = (double)analogRead(A4)/1023*500;
   Serial.print("RTD,");
   Serial.print(meas);
   Serial.print(",temp_obj,");

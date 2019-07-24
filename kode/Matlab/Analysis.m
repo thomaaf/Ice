@@ -1,5 +1,5 @@
 %indicator = "ambTemp,DryTempRef,DewTempRef,refstate,ref,light,temperature,duty,dir,dt,integral,t,error";
-indicator = "zeroMean,mean,pVal,ambTemp,ref,light,temperature,duty,dir,dt,integral,t,error";
+indicator = "tempheavy,heating,zeroMean,mean,pVal,ambTemp,ref,light,temperature,duty,dir,dt,integral,t,error"
 COM = 'COM4'; 
 BAUD = 500000;
 [S,readindicator] = SerialRead(indicator,COM,BAUD);
