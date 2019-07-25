@@ -16,6 +16,7 @@ char nameList[] = "zeroMean,mean,pVal,ambTemp,ref,light,temperature,duty,dir,dt,
 void loop(){
 	double pValue = sensor.probabilityTest();
 	double ref = refCalc.getReference();
+	//double ref = 7.5*sin((double) millis()/1000) + 26 -7.5 + 1.5*sin((double) millis()/763) + 5*sin((double) millis()/2000) 
 	//double ref = 10;
 	
 	sensor.measureLight();	

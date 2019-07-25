@@ -17,7 +17,7 @@ private:
 	
 	double ambientTemperature = 0;
 	double temperatureHeavyFiltered = 20.0;
-	double 	temperatureHeavyFilterValue = 0.01;
+	double 	temperatureHeavyFilterValue = 0.001;
 
 	double 	temperature = 20.0;
 	double 	temperatureFilterValue = 0.0;
