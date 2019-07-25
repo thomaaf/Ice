@@ -55,8 +55,8 @@ double Sensor::getLightValue(){
 }
 
 void Sensor::measureTemperature(){
-	temperatureHeavyFiltered = temperatureHeavyFiltered + temperatureHeavyFilterValue*(((double)(analogRead(temperatureSensorReadPin)-506)/1023*90) - temperatureHeavyFiltered);
-	temperature = temperature + temperatureFilterValue*(((double)(analogRead(temperatureSensorReadPin)-506)/1023*90) - temperature);
+	temperatureHeavyFiltered = temperatureHeavyFiltered + temperatureHeavyFilterValue*(((double)(analogRead(temperatureSensorReadPin)-509)/1018*100) - temperatureHeavyFiltered);
+	temperature = temperature + temperatureFilterValue*(((double)(analogRead(temperatureSensorReadPin)-509)/1018*100) - temperature);
 }
 
 double Sensor::getTemperature(){

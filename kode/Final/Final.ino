@@ -11,7 +11,7 @@ void setup(){
 	calibrate();
 }
 
-char nameList[] = "zeroMean,mean,pVal,ambTemp,ref,light,temperature,duty,dt,t,error,heating,heavtemp,derivative";
+char nameList[] = "zeroMean,mean,pVal,ambTemp,ref,light,temperature,duty,dir,dt,t,error,heating,heavtemp";
 
 void loop(){
 	double pValue = sensor.probabilityTest();
@@ -33,7 +33,7 @@ void loop(){
 
 	PIC.inputCalculation(ref,sensor.getTemperature(),millis(),1.0);
 	PWM.set_control(PIC.getDir(),PIC.getInput());
-	double stateList[] = {sensor.getLightZeroMean(),sensor.getLightMean(),pValue,sensor.getAmbientTemperature(), ref,sensor.getLightValue(),sensor.getTemperature(),PIC.getInput(),PIC.getDt(),PIC.getT(),PIC.getError(),refCalc.getHeating(),sensor.getHeavyTemperature(),PIC.getDerivative()}; 	
+	double stateList[] = {sensor.getLightZeroMean(),sensor.getLightMean(),pValue,sensor.getAmbientTemperature(), ref,sensor.getLightValue(),sensor.getTemperature(),PIC.getInput(),PIC.getDir(),PIC.getDt(),PIC.getT(),PIC.getError(),refCalc.getHeating(),sensor.getHeavyTemperature()}; 	
 		
 	printStates(nameList,sizeof(nameList),stateList);		
 }
@@ -56,7 +56,7 @@ void calibrate(){
 			//PIC.inputCalculation(ref,sensor.getTemperature(),millis(),1.0);
 			PWM.set_control(PIC.getDir(),PIC.getInput());
 			//Serial.println(sensor.getLightZeroMean());
-			double stateList[] = {sensor.getLightZeroMean(),sensor.getLightMean(),pValue,sensor.getAmbientTemperature(), ref,sensor.getLightValue(),sensor.getTemperature(),PIC.getInput(),PIC.getDt(),PIC.getT(),PIC.getError(),refCalc.getHeating(),sensor.getHeavyTemperature(),PIC.getDerivative()};
+			double stateList[] = {sensor.getLightZeroMean(),sensor.getLightMean(),pValue,sensor.getAmbientTemperature(), ref,sensor.getLightValue(),sensor.getTemperature(),PIC.getInput(),PIC.getDir(),PIC.getDt(),PIC.getT(),PIC.getError(),refCalc.getHeating(),sensor.getHeavyTemperature()};
 			printStates(nameList,sizeof(nameList),stateList);		
 			dataSet[i] = stateList[5];
 			tmpmean += dataSet[i];
