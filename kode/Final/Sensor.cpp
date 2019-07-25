@@ -16,7 +16,6 @@ void Sensor::begin(){
 	pinMode(lightSensorReadPin,INPUT);
 	pinMode(temperatureSensorReadPin,INPUT);
 	digitalWrite(laserControlPin,LOW);
-	enableLaser();
 	while((abs(getTemperature()) - 25.0 > 10) || (abs(getAmbientTemperature()) - 25.0 > 10)||(getLightValue()>820)||(getLightValue()<100)){
 		measureTemperature();
 		measureLight();				
@@ -43,18 +42,12 @@ void Sensor::begin(){
 }	
 
 
-void Sensor::enableLaser(){
-	digitalWrite(laserControlPin,HIGH);
-}
-
-void Sensor::disableLaser(){
-	digitalWrite(laserControlPin,LOW);
-}
 
 
 void Sensor::measureLight(){
 	//Ema Filtered// lightValue = lightValue + lightFilterValue*(analogRead(lightSensorReadPin) - lightValue);
-	lightValue = analogRead(lightSensorReadPin);
+	
+	lightValue = analogRead(lightSensorReadPin) - round((double)0.4144*temperature);
 }
 
 double Sensor::getLightValue(){
@@ -69,16 +62,22 @@ void Sensor::measureTemperature(){
 double Sensor::getTemperature(){
 	return temperature;
 }
+
+double Sensor::getHeavyTemperature(){
+	return temperatureHeavyFiltered;
+}
+
 double Sensor::getAmbientTemperature(){
 	return (double) analogRead(ambientTemperatureReadPin)/1023*500;
 }
 
 void Sensor::modifiedMovingAverage(){
 	// Two rolling Mean. zeroMean with long Slength, s.t mean fits settlings and longer duration disturbances
-	double sampleLengthShort = 50;
-	double sampleLengthLong  = 300;
-	mean = ((sampleLengthShort - 1)*mean + lightValue)/sampleLengthShort;
-	//zeroMean = ((sampleLengthLong - 1)*zeroMean + lightValue)/sampleLengthLong;
+	int sampleLengthShort = 50;
+	int sampleLengthLong  = 8000;
+
+	mean = (double)((sampleLengthShort - 1)*mean + lightValue)/sampleLengthShort;
+	zeroMean = (double)((sampleLengthLong - 1)*zeroMean + lightValue)/sampleLengthLong;
 }
 
 double Sensor::getLightZeroMean(){
@@ -107,85 +106,8 @@ void Sensor::setZeroMeanAndVar(double mean,double var){
 	this -> zeroVariance = var;
 	this -> mean = mean;
 }
-/*
-double Sensor::dpCalculation(){
-	double T = ambientTemperature;
-	double lambda = 243.12; double beta = 17.62;
-	dp = (lambda*(log(RH/100) + beta*T/(lambda + T)))/(beta - (log(RH/100) + beta*T/(lambda + T)));
-}
-double Sensor::referenceCalc(){
-	if (abs(temperatureFiltered-ref) < treshold ){
-		if ()
-	}
-}
-*/
-/* No longer used. Old reference based method
-void Sensor::calculateReference(){
-	switch (state){
-		case 1 : //Looking for dew to be removed
-			reference = dryTemperatureReference;
-			if(lightValue>dryLightTreshold){
-			//Light has reached steadyState, and dew has therefore been removed
-				state = -1;
-				dryTemperatureReference --; //Reduce the dewRemoved temperatureReference
-				reference = dewTemperatureReference;
-			}
-			else if((temperature > dryTemperatureReference - 1)&&(temperature < dryTemperatureReference + 1 )){
-			//Temperature has reached the estimated temperature where dew should have been removed, but
-			//has not detected that the dew has been removed
-				dryTemperatureReference++; //Increase the dryTemperature estimate, and set new reference
-				reference = dryTemperatureReference;
-			}
-			else if(temperature>maxTemp){
-			//The temperature has exceeded the maximum temperature. The dew has most likely been removed, but
-			// It has not been detected. Resett the lightTreshold to this value, and also resett the dryTemperature to 
-			// some value below the maxRating. Allowing the procedure to start again. '
-				state = 0;
-				reference = NULL;
-			}
-			return;
-		case -1:
-			reference = dewTemperatureReference;
-			if( lightValue < dewLightTreshold){ 
-			//Dew detechted
-				state = 1;
-				dewTemperatureReference ++;	//Increase the dewTemperatureReference in order to check for changes in next loop
-				reference  = dryTemperatureReference;
-			}
-			else if((temperature > dewTemperatureReference - 0.3 )&&(temperature < dewTemperatureReference + 0.3)){ 
-			//Temperature has reached estimated dewpoint, but has not discovered dew
-				dewTemperatureReference --; // Decrease the estimat, and set new reference
-				reference = dewTemperatureReference;
-			}
-			else if(temperature<minTemp){
-			//The temperature has exceeded the minimum temperature. Should decrease the treshold
-				state = 0;
-				reference = NULL;
-			}
-			return;
-		case 0 :
-			reference = NULL;
-			return;
-	}
-}
 
-double Sensor::getReference(){
-	return reference;
-}
-int Sensor::getRefState(){
-	return state;
-}
-double Sensor::getDryLightTreshold(){
-	return dryLightTreshold;
-}
 
-double Sensor::getDewLightTreshold(){
-	return dewLightTreshold;
+void Sensor::resetZeroMean(){
+	zeroMean = mean;
 }
-double Sensor::getDewTemperatureReference(){
-	return dewTemperatureReference;
-}
-double Sensor::getDryTemperatureReference(){
-	return dryTemperatureReference;
-}
-*/

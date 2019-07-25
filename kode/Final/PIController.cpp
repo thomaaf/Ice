@@ -13,9 +13,18 @@ PIController::PIController(double Kp,double Ki,double intSat){
 }
 void PIController::inputCalculation(double ref, double meas,int t,int state){
 	if (state == 0){dir = 0; u = 0; return;}
+	
 	dt = (double)(t - this -> t)/1000; 
+	if (dt >0.05){dt = 0.05;}
+
+	derivative = (ref - meas -error)/dt;
+	//Serial.println(derivative);
+	if(abs(derivative)>100){derivative = 0.0;}
+	lp = lp + dt*(-50.0*lp + derivative);
+	derivative = lp;
+	//derivative = derivative + dt*(-100*derivative + 1.0*((ref - meas -error)/dt));  
 	error = ref - meas; 
-	integral = integral + dt*error*3.0;
+	integral = integral + dt*error*1.0;
 	//Serial.println(integral*Ki);
 	u = (int) (Kp*error + Ki*integral);
 	if (integral>0){ integral = min(intSat/Ki,integral);}
@@ -46,4 +55,12 @@ int PIController::getT(){
 }
 double PIController::getError(){
 	return error;
+}
+void PIController::resetIntegral(){
+
+	integral = 0.0;
+
+}
+double PIController::getDerivative(){
+	return derivative;
 }

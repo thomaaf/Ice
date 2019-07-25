@@ -1,7 +1,7 @@
 %indicator = "ambTemp,DryTempRef,DewTempRef,refstate,ref,light,temperature,duty,dir,dt,integral,t,error";
-indicator = "tempheavy,heating,zeroMean,mean,pVal,ambTemp,ref,light,temperature,duty,dir,dt,integral,t,error"
+indicator = "zeroMean,mean,pVal,ambTemp,ref,light,temperature,duty,dir,dt,t,error,heating,heavtemp,derivative";
 COM = 'COM4'; 
-BAUD = 500000;
+BAUD = 115200;
 [S,readindicator] = SerialRead(indicator,COM,BAUD);
 clear COM BAUD indicator
 if size(instrfind(),1)>0
